@@ -1,23 +1,21 @@
 %=====================================================================
-% jhwhw.cls
-% Provide jhwhw.cls class
+% homework.cls
+% Provide homework.cls class
 %=====================================================================
 
 %=====================================================================
 % Identification
 %=====================================================================
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{jhwhw}[2009/02/11 Justin Wilson's Homework Class]
+\ProvidesClass{homework}[2009/02/11 Justin Wilson's Homework Class]
 
-\LoadClass[letterpaper, 12pt]{report}
-%\RequirePackage{jhwmath} Personal style file I use.
+\LoadClass[letterpaper, 11pt]{report}
 
 \RequirePackage{fancyhdr}
 \RequirePackage[top=1in,bottom=1in,left=1in,right=1in]{geometry}
 \RequirePackage{graphicx}
 \RequirePackage{empheq}
 \RequirePackage{ifthen}
-%\RequirePackage{jhwgraphics} Another personal style file I use.
 
 
 %=====================================================================
@@ -68,22 +66,3 @@
 \renewcommand{\theenumi}{(\alph{enumi})}
 \renewcommand{\labelenumi}{\theenumi}
 \renewcommand{\theenumii}{\roman{enumii}}
-
-% \def\problemmark{}
-
-% % Typesetting problems
-
-% % \newcommand*{\prob}[1]{\newpage \noindent \textbf{\Large #1}}
-% % \newcommand*{\problem}[1]{\stepcounter{ProblemNum} \prob{Problem %
-% % \theProblemNum.}}
-% % \newcommand*{\soln}[1]{\\ \noindent \textbf{\Large #1}}
-% % \newcommand*{\solution}{\soln{Solution}}
-% % \renewcommand*{\part}{\\ \noindent \stepcounter{SubProblemNum} %
-% % \textbf{\Large Part (\theSubProblemNum)}}
-
-% \newcommand\problem{\@startsection{problem}{1}{\z@}%
-%                      {-3.25ex \@plus -1ex \@minus -.2ex}%
-%                      {1.5ex \@plus .2ex}%
-%                      {\normalfont\large\bfseries}}
-
-
