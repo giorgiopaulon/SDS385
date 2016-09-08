@@ -172,7 +172,7 @@ The performances of the three algorithms are displayed in Figure \ref{fig:perf1}
 \label{fig:perf2}
 \end{figure}
 
-Let us take, as an example, $(N, P) = (1000,500)$ and let us compare the results for different levels of sparsity $K$ of the matrix $X$. As one can see in Figure \ref{fig:perf2}, when the features matrix is dense, both the Cholesky and the inversion methods outperform the sparse method, as this latter involves a first stage in which $X$ is converted in a sparse format. However, as $K$ increases, the sparse method becomes significantly faster than the others. This is due to the fact that matricial products are more efficient in a sparse format and a lot of useless computations is avoided.
+Let us take, as an example, $(N, P) = (1000,500)$ and let us compare the results for different levels of sparsity $K$ of the matrix $X$. As one can see in Figure \ref{fig:perf2}, when the features matrix is dense, both the Cholesky and the inversion methods outperform the sparse methods, as these latter involve a first stage in which $X$ is converted in a sparse format. However, as $K$ increases, the sparse methods become significantly faster than the others. This is due to the fact that matricial products are more efficient in a sparse format and a lot of useless computations is avoided.
 
 \end{enumerate}
 
@@ -198,9 +198,11 @@ The gradient of this latter expression is
 &= -X^T (y - mw).
 \end{align*}
 
-\item The gradient descent method has been implemented for a fixed step size $\alpha = 0.01$, which is a sufficiently small value to ensure convergence. As a stopping criterion, we used the $L^2$-norm of the difference between two consecutive values of the $\beta$ parameter we are trying to estimate. Is that norm is below a certain threshold ($\varepsilon = 10^{-5}$), then the algorithm has reached convergence and it stops.
+\item The gradient descent method has been implemented for a fixed step size $\alpha = 0.01$, which is a sufficiently small value to ensure convergence. As a stopping criterion, we used the relative decrement of the negative log-likelihood. In other terms, we defined the quantity
+$$\delta = \frac{l(\beta^{(k)}) - l(\beta^{(k+1)})}{| l(\beta^{(k)}) + \varepsilon|}$$
+and the algorithm stops when $\delta$ is smaller than a certain threshold (in our case set to $10^-10$). 
 
-We tested the validity of this method on a real dataset containing the classification of a breast cell. We dispose of $10$ features for $X$, and of $n = 569$ data points. In Figure \ref{fig:grad} the values of the negative log-likelihood are displayed. The gradient descent converges, in this case, after around $20000$ iterations.
+We tested the validity of this method on a real dataset containing the classification of a breast cell. We dispose of $10$ features for $X$, and of $n = 569$ data points. In Figure \ref{fig:grad} the values of the negative log-likelihood are displayed. The gradient descent converges, in this case, after around $60000$ iterations.
 
 \begin{figure}[!ht]
 \centering
@@ -254,9 +256,9 @@ where
 &\quad \text{ } - \frac{1}{2} (y - mw + WX \beta_0)^T W^{-1} (y - mw + WX \beta_0).
 \end{align*}
 
-\item Newton's method has successfully been implemented. As a stopping criterion, we used the $L^2$-norm of the difference between two consecutive values of the $\beta$ parameter we are trying to estimate, as before.
+\item Newton's method has successfully been implemented. As a stopping criterion, we used the same as before.
 
-We tested the validity of this method on the same real dataset as before. In Figure \ref{fig:newton} the values of the negative log-likelihood are displayed. The gradient descent converges, in this case, after $11$ iterations.
+We tested the validity of this method on the same real dataset as before. In Figure \ref{fig:newton} the values of the negative log-likelihood are displayed. The gradient descent converges, in this case, after $11$ iterations. In Listing \ref{Routput} we can see that the estimates using R's built-in \texttt{glm} function and the two methods we implemented are the same.
 
 \begin{figure}[!ht]
 \centering
@@ -265,10 +267,11 @@ We tested the validity of this method on the same real dataset as before. In Fig
 \label{fig:newton}
 \end{figure}
 
-\item As we have seen, Newton's method is significantly faster than gradient descent in terms of the total number of iterations that are needed to reach convergence. However, be aware that each iteration of Newton's method is computationally more intense, as it involves the computation of the Hessian matrix and, moreover, the resolution of a linear system. Overall, Newton's method converges more rapidly as it is able to fully exploit the information provided by the second derivatives of the function we are trying to minimize. 
+\lstinputlisting[float=h,frame=tb,caption=Comparison of the estimates using three different algorithms,label=Routput]{./Img/output.txt}
+
+\item As we have seen, Newton's method is significantly faster than gradient descent in terms of the total number of iterations that are needed to reach convergence. However, be aware that each iteration of Newton's method is computationally more intense, as it involves the computation of the Hessian matrix and, moreover, the resolution of a linear system. Overall, Newton's method converges more rapidly as it is able to fully exploit the information provided by the second derivatives of the function we are trying to minimize, that is, the information concerning the curvature of the objective function. In fact, choosing the descent direction to be simply the vector orthogonal to the level curves can often lead to a slower convergence. The inverse of the Hessian matrix has the role to correct the gradient direction.
 
 Newton's method is reliable when the difference between the true function and its quadratic approximation is not too large. 
-
 
 \end{enumerate}
 

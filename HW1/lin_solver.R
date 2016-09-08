@@ -8,16 +8,21 @@
 # Optimal function calculating WLS via inverting the matrix and optimizing the 
 # product with the diagonal matrix
 my_inv <- function(X, y, W){
-  beta_hat <- solve(crossprod(diag(W)^(1/2)*X))%*%(t(X*diag(W))%*%y)
-  
+  wx <- diag(W)^(1/2)*X
+  wy <- diag(W)^(1/2)*y
+  beta_hat <- solve(crossprod(wx), crossprod(wx, wy))
+
   return(beta_hat)
 }
 
 # Optimal function calculating WLS via Cholesky decomposition and optimizing the 
 # product with the diagonal matrix
 my_chol <- function(X, y, W){
-  inverse <- chol2inv(chol(crossprod(diag(W)^(1/2)*X)))
-  beta_hat <- inverse%*%(t(X*diag(W))%*%y) 
+  wx <- diag(W)^(1/2)*X
+  wy <- diag(W)^(1/2)*y
+  R = chol(crossprod(wx))
+  u = forwardsolve(t(R), crossprod(wx, wy))
+  beta_hat = backsolve(R, u)
   
   return(beta_hat)
 }
@@ -25,11 +30,12 @@ my_chol <- function(X, y, W){
 # Optimal function calculating WLS via QR factorization
 my_QR <- function(X, y, W){
   P <- ncol(X)
-  QR <- qr(diag(W)^(1/2)*X)
-  Q <- qr.Q(QR)
-  R <- qr.R(QR)
-  b <- t(Q*diag(W)^(1/2))%*%y
-  beta_hat <- backsolve(R, b)
+  wx <- diag(W)^(1/2)*X
+  wy <- diag(W)^(1/2)*y
+  QR <- qr(wx)
+
+  qty = qr.qty(QR, wy)
+  beta_hat = backsolve(QR$qr, qty)
 
   return(beta_hat)
 }
@@ -38,10 +44,31 @@ my_QR <- function(X, y, W){
 # sparsity of the matrix X
 my_inv_sparse <- function(X, y, W){
   X = Matrix(X, sparse=TRUE)
-  beta_hat <- solve(crossprod(diag(W)^(1/2)*X))%*%(t(X*diag(W))%*%y)
+  wx <- diag(W)^(1/2)*X
+  wy <- diag(W)^(1/2)*y
+  beta_hat <- solve(crossprod(wx), crossprod(wx, wy))
   
   return(beta_hat)
 }
+
+# Optimal function calculating WLS via Cholesky decomposition and exploiting the
+# sparsity of the matrix X
+my_chol_sparse <- function(X, y, W){
+  X = Matrix(X, sparse=TRUE)
+  wx <- diag(W)^(1/2)*X
+  wy <- diag(W)^(1/2)*y
+  R = chol(crossprod(wx))
+  u = forwardsolve(t(R), crossprod(wx, wy))
+  beta_hat = backsolve(R, u)
+  
+  return(beta_hat)
+}
+
+# VEDERE GLI SPARSE METHODS
+
+# Non usare QR perché calcolare la matrice ortogonale è costoso, inoltre la matrice Q
+# è densa!
+
 
 # QR solver for the system Ax = b
 QR_solver <- function(A, b){

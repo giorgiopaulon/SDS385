@@ -11,32 +11,32 @@ SGD <- function(y, X, mi, beta0, maxiter, alpha, tol){
   betas <- array(NA, dim=c(maxiter, length(beta0)))
   betas[1,] <- beta0 # Initial guess
   
-  ll <- array(NA, dim = maxiter)
-  ll[1] <- log_lik(betas[1,], matrix(y[idx[1]],nrow=1), matrix(X[idx[1],],nrow=1), mi[idx[1]])
+  av_ll <- array(NA, dim = maxiter)
+  av_ll[1] <- log_lik(betas[1,], matrix(y[idx[1]],nrow=1), matrix(X[idx[1],],nrow=1), mi[idx[1]])
   
   for (iter in 2:maxiter){
     
     gradient <- grad_loglik(betas[iter-1,], matrix(y[idx[iter]],nrow=1), matrix(X[idx[iter],],nrow=1), mi[idx[iter]])
     betas[iter,] <- betas[iter-1,] - alpha*gradient
-    ll[iter] <- log_lik(betas[iter,], matrix(y[idx[iter]],nrow=1), matrix(X[idx[iter],],nrow=1), mi[idx[iter]])
+    ll <- log_lik(betas[iter,], matrix(y[idx[iter]],nrow=1), matrix(X[idx[iter],],nrow=1), mi[idx[iter]])
+    av_ll[iter] <- ((av_ll[iter-1])*(iter-1) + ll)/iter
     
-#     # Convergence check
-#     if (sqrt(sum((betas[iter,] - betas[iter-1,])^2)) < tol){
-#       cat('Algorithm has converged after', iter, 'iterations')
-#       ll <- ll[1:iter]
-#       betas <- betas[1:iter,]
-#       break;
-#     }
-#     
-#     else if (iter == maxiter & sqrt(sum((betas[iter,] - betas[iter-1,])^2)) >= tol){
-#       print('WARNING: algorithm has not converged')
-#       break;
-#    }
+    # Convergence check
+    if (abs(av_ll[iter-1] - av_ll[iter])/(av_ll[iter-1] + 1E-10) < tol){
+      cat('Algorithm has converged after', iter, 'iterations')
+      av_ll <- av_ll[1:iter]
+      betas <- betas[1:iter,]
+      break;
+    }
+    
+    else if (iter == maxiter & abs(av_ll[iter-1] - av_ll[iter])/(av_ll[iter-1] + 1E-10) >= tol){
+      print('WARNING: algorithm has not converged')
+      break;
+    }
+    
   }
   
-  ll <- cumsum(ll)/(1:iter) # Simple moving average
-  
-  return(list("ll" = ll, "beta" = betas))
+  return(list("ll" = av_ll, "beta" = betas))
 }
 
 
@@ -60,20 +60,21 @@ SGD_Robbins <- function(y, X, mi, beta0, maxiter, C, t0, alpha, tol){
     
     gradient <- grad_loglik(betas[iter-1,], matrix(y[idx[iter]],nrow=1), matrix(X[idx[iter],],nrow=1), mi[idx[iter]])
     betas[iter,] <- betas[iter-1,] - step_size*gradient
-    ll[iter] <- log_lik(betas[iter,], matrix(y[idx[iter]],nrow=1), matrix(X[idx[iter],],nrow=1), mi[idx[iter]])
+    ll <- log_lik(betas[iter,], matrix(y[idx[iter]],nrow=1), matrix(X[idx[iter],],nrow=1), mi[idx[iter]])
+    av_ll[iter] <- ((av_ll[iter-1])*(iter-1) + ll)/iter
     
-#     # Convergence check
-#     if (sqrt(sum((betas[iter,] - betas[iter-1,])^2)) < tol){
-#       cat('Algorithm has converged after', iter, 'iterations')
-#       ll <- ll[1:iter]
-#       betas <- betas[1:iter,]
-#       break;
-#     }
-#     
-#     else if (iter == maxiter & sqrt(sum((betas[iter,] - betas[iter-1,])^2)) >= tol){
-#       print('WARNING: algorithm has not converged')
-#       break;
-#     }
+    # Convergence check
+    if (abs(av_ll[iter-1] - av_ll[iter])/(av_ll[iter-1] + 1E-10) < tol){
+      cat('Algorithm has converged after', iter, 'iterations')
+      av_ll <- av_ll[1:iter]
+      betas <- betas[1:iter,]
+      break;
+    }
+    
+    else if (iter == maxiter & abs(av_ll[iter-1] - av_ll[iter])/(av_ll[iter-1] + 1E-10) >= tol){
+      print('WARNING: algorithm has not converged')
+      break;
+    }
    }
   
   ll <- cumsum(ll)/(1:iter) # Simple moving average

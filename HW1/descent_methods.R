@@ -48,14 +48,14 @@ gradient_descent <- function(y, X, mi, beta0, maxiter, alpha, tol){
     ll[iter] <- log_lik(betas[iter,], y, X, mi)
     
     # Convergence check
-    if (sqrt(sum((betas[iter,] - betas[iter-1,])^2)) < tol){
+    if ((ll[iter-1] - ll[iter])/(ll[iter-1] + 1E-3) < tol){
       cat('Algorithm has converged after', iter, 'iterations')
       ll <- ll[1:iter]
       betas <- betas[1:iter,]
       break;
     }
     
-    else if (iter == maxiter & sqrt(sum((betas[iter,] - betas[iter-1,])^2)) >= tol){
+    else if (iter == maxiter & (ll[iter-1] - ll[iter])/(ll[iter-1] + 1E-2) >= tol){
       print('WARNING: algorithm has not converged')
       break;
     }
