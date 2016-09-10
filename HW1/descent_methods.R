@@ -1,7 +1,6 @@
 
 # DESCENT METHODS
 
-
 # Compute the probabilities associated with the logit model
 comp_wi <- function(X, beta){
   wi <- 1/(1+exp(-X%*%beta))

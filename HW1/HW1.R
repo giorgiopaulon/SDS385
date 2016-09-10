@@ -119,7 +119,7 @@ gradient <- gradient_descent(y, X, mi, beta0, maxiter, alpha, tol)
 newton <- newton_descent(y, X, mi, beta0, maxiter, tol)
 
 par(mar=c(4,4,2,2))
-plot(gradient$ll, type = 'l', lwd = 2, col = 'red', xlab = 'Iterations', ylab = 'Negative Log-likelihood')
+plot(gradient$ll, type = 'l', lwd = 2, col = 'red', xlab = 'Iterations', ylab = 'Negative Log-likelihood', log = 'x')
 plot(newton$ll, type = 'l', lwd = 2, col = 'red', xlab = 'Iterations', ylab = 'Negative Log-likelihood')
 
 results <- rbind(glm1$coefficients, gradient$beta, newton$beta)
