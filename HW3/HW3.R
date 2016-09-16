@@ -23,34 +23,24 @@ mi <- rep(1, N)
 glm1 = glm(y~X[,-1], family='binomial')
 
 
-
-maxiter = 100000
+maxiter = 10000
 tol = 10E-10
-alpha = 0.01
 beta0 <- rep(0, P)
 
-gradient <- GD_line_search(y, X, mi, beta0, maxiter, tol)
+gradient <- GD.line.search(y, X, mi, beta0, maxiter, tol)
 
+newton <- quasi.newton(y, X, mi, beta0, maxiter, tol)
 
+par(mar=c(4,4,3,2))
+barplot(table(gradient$alpha), main='Barplot of the chosen optimal step sizes')
+barplot(table(newton$alpha), main='Barplot of the chosen optimal step sizes')
 
-
-
-
-
-
-
-
-
-
-
-newton <- newton_descent(y, X, mi, beta0, maxiter, tol)
-
-par(mar=c(4,4,2,2))
-plot(gradient$ll, type = 'l', lwd = 2, col = 'red', xlab = 'Iterations', ylab = 'Negative Log-likelihood')
+par(mar=c(4,4,3,2))
+plot(gradient$ll, type = 'l', lwd = 2, col = 'red', xlab = 'Iterations', ylab = 'Negative Log-likelihood', log='x')
 plot(newton$ll, type = 'l', lwd = 2, col = 'red', xlab = 'Iterations', ylab = 'Negative Log-likelihood')
 
 results <- rbind(glm1$coefficients, gradient$beta, newton$beta)
 for (i in 0:(dim(results)[2]-1))
   colnames(results)[i+1] <- paste('Beta', i, sep='')
 rownames(results) <- c('Glm','Gradient','Newton')
-
+results

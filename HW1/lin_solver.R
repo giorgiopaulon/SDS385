@@ -1,67 +1,67 @@
 
 # Functions used to solve the linear system
-# Beta_hat = (X^T %*% W %*% X)^(-1) X^T %*% W %*% Y
+# Beta.hat = (X^T %*% W %*% X)^(-1) X^T %*% W %*% Y
 # whose solution minimizes 
 # 1/2*(Y - X %*% Beta)^T %*% W %*% (Y - X%*%Beta)
 
 
 # Optimal function calculating WLS via inverting the matrix and optimizing the 
 # product with the diagonal matrix
-my_inv <- function(X, y, W){
-  wx <- diag(W)^(1/2)*X
-  wy <- diag(W)^(1/2)*y
-  beta_hat <- solve(crossprod(wx), crossprod(wx, wy))
+my.inv <- function(X, y, W){
+  wx <- diag(W)^(1/2) * X
+  wy <- diag(W)^(1/2) * y
+  beta.hat <- solve(crossprod(wx), crossprod(wx, wy))
 
-  return(beta_hat)
+  return(beta.hat)
 }
 
 # Optimal function calculating WLS via Cholesky decomposition and optimizing the 
 # product with the diagonal matrix
-my_chol <- function(X, y, W){
-  wx <- diag(W)^(1/2)*X
-  wy <- diag(W)^(1/2)*y
+my.chol <- function(X, y, W){
+  wx <- diag(W)^(1/2) * X
+  wy <- diag(W)^(1/2) * y
   R = chol(crossprod(wx))
   u = forwardsolve(t(R), crossprod(wx, wy))
-  beta_hat = backsolve(R, u)
+  beta.hat = backsolve(R, u)
   
-  return(beta_hat)
+  return(beta.hat)
 }
 
 # Optimal function calculating WLS via QR factorization
-my_QR <- function(X, y, W){
+my.QR <- function(X, y, W){
   P <- ncol(X)
-  wx <- diag(W)^(1/2)*X
-  wy <- diag(W)^(1/2)*y
+  wx <- diag(W)^(1/2) * X
+  wy <- diag(W)^(1/2) * y
   QR <- qr(wx)
 
   qty = qr.qty(QR, wy)
-  beta_hat = backsolve(QR$qr, qty)
+  beta.hat = backsolve(QR$qr, qty)
 
-  return(beta_hat)
+  return(beta.hat)
 }
 
 # Optimal function calculating WLS via inverting the matrix and exploiting the
 # sparsity of the matrix X
-my_inv_sparse <- function(X, y, W){
+my.invsparse <- function(X, y, W){
   X = Matrix(X, sparse=TRUE)
-  wx <- diag(W)^(1/2)*X
-  wy <- diag(W)^(1/2)*y
-  beta_hat <- solve(crossprod(wx), crossprod(wx, wy))
+  wx <- diag(W)^(1/2) * X
+  wy <- diag(W)^(1/2) * y
+  beta.hat <- solve(crossprod(wx), crossprod(wx, wy))
   
-  return(beta_hat)
+  return(beta.hat)
 }
 
 # Optimal function calculating WLS via Cholesky decomposition and exploiting the
 # sparsity of the matrix X
-my_chol_sparse <- function(X, y, W){
+my.cholsparse <- function(X, y, W){
   X = Matrix(X, sparse=TRUE)
-  wx <- diag(W)^(1/2)*X
-  wy <- diag(W)^(1/2)*y
+  wx <- diag(W)^(1/2) * X
+  wy <- diag(W)^(1/2) * y
   R = chol(crossprod(wx))
   u = forwardsolve(t(R), crossprod(wx, wy))
-  beta_hat = backsolve(R, u)
+  beta.hat = backsolve(R, u)
   
-  return(beta_hat)
+  return(beta.hat)
 }
 
 # VEDERE GLI SPARSE METHODS
@@ -71,7 +71,7 @@ my_chol_sparse <- function(X, y, W){
 
 
 # QR solver for the system Ax = b
-QR_solver <- function(A, b){
+QR.solver <- function(A, b){
   QR <- qr(A)
   x <- solve.qr(QR, b)
   

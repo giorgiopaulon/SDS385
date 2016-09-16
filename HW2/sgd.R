@@ -1,6 +1,12 @@
 
 
 # Function for the SGD of the logit model
+# Inputs:
+#   -
+#   - 
+# Outputs:
+#   - 
+#   - 
 SGD <- function(y, X, mi, beta0, maxiter, alpha, tol){
   
   N <- dim(X)[1]
@@ -21,18 +27,18 @@ SGD <- function(y, X, mi, beta0, maxiter, alpha, tol){
     ll <- log_lik(betas[iter,], matrix(y[idx[iter]],nrow=1), matrix(X[idx[iter],],nrow=1), mi[idx[iter]])
     av_ll[iter] <- ((av_ll[iter-1])*(iter-1) + ll)/iter
 
-#     # Convergence check
-#     if (abs(av_ll[iter-1] - av_ll[iter])/(av_ll[iter-1] + 1E-10) < tol){
-#       cat('Algorithm has converged after', iter, 'iterations')
-#       av_ll <- av_ll[1:iter]
-#       betas <- betas[1:iter,]
-#       break;
-#     }
-#     
-#     else if (iter == maxiter & abs(av_ll[iter-1] - av_ll[iter])/(av_ll[iter-1] + 1E-10) >= tol){
-#       print('WARNING: algorithm has not converged')
-#       break;
-#     }
+    # Convergence check
+    if (abs(av_ll[iter-1] - av_ll[iter])/(av_ll[iter-1] + 1E-10) < tol){
+      cat('Algorithm has converged after', iter, 'iterations')
+      av_ll <- av_ll[1:iter]
+      betas <- betas[1:iter,]
+      break;
+    }
+
+    else if (iter == maxiter & abs(av_ll[iter-1] - av_ll[iter])/(av_ll[iter-1] + 1E-10) >= tol){
+      print('WARNING: algorithm has not converged')
+      break;
+    }
     
   }
   
@@ -63,18 +69,18 @@ SGD_Robbins <- function(y, X, mi, beta0, maxiter, C, t0, alpha, tol){
     ll <- log_lik(betas[iter,], matrix(y[idx[iter]],nrow=1), matrix(X[idx[iter],],nrow=1), mi[idx[iter]])
     av_ll[iter] <- ((av_ll[iter-1])*(iter-1) + ll)/iter
     
-#     # Convergence check
-#     if (abs(av_ll[iter-1] - av_ll[iter])/(av_ll[iter-1] + 1E-10) < tol){
-#       cat('Algorithm has converged after', iter, 'iterations')
-#       av_ll <- av_ll[1:iter]
-#       betas <- betas[1:iter,]
-#       break;
-#     }
-#     
-#     else if (iter == maxiter & abs(av_ll[iter-1] - av_ll[iter])/(av_ll[iter-1] + 1E-10) >= tol){
-#       print('WARNING: algorithm has not converged')
-#       break;
-#     }
+    # Convergence check
+    if (abs(av_ll[iter-1] - av_ll[iter])/(av_ll[iter-1] + 1E-10) < tol){
+      cat('Algorithm has converged after', iter, 'iterations')
+      av_ll <- av_ll[1:iter]
+      betas <- betas[1:iter,]
+      break;
+    }
+
+    else if (iter == maxiter & abs(av_ll[iter-1] - av_ll[iter])/(av_ll[iter-1] + 1E-10) >= tol){
+      print('WARNING: algorithm has not converged')
+      break;
+    }
   }
   
   return(list("ll" = av_ll, "beta" = betas))
