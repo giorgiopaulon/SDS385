@@ -7,7 +7,7 @@ rm(list=ls())
 
 # (B)
 
-source('../SDS385/HW3/line_search.R')
+source('../SDS385/HW3/line_search_GD_quasinewton.R')
 
 # TRIAL ON REAL DATA
 
