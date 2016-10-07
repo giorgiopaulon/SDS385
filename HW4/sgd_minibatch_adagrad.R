@@ -129,8 +129,6 @@ SGD.linesearch <- function(y, X, mi, beta0, maxiter = 100000, tol = 1E-8){
     ll <- log.lik(betas[iter, ], y[idx[iter]], matrix(X[idx[iter],], nrow=1), mi[idx[iter]])
     av.ll[iter] <- ((av.ll[iter-1])*(iter-1) + ll)/iter
     
-    cat(iter, "\n")
-    
     # Convergence check
     if (abs(av.ll[iter-1] - av.ll[iter]) / (av.ll[iter-1] + 1E-10) < tol){
       cat('Algorithm has converged after', iter, 'iterations')
