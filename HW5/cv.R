@@ -1,34 +1,41 @@
 
-log.lik <- function(y, lambda, theta){
-  obj <- (1/2) * (y - theta)^2 + lambda * abs(theta)
-  return (obj)
-}
-
 S.lambda <- function(y, lambda){
+  # Computes the soft thresholding estimator
+  # ----------------------------------------
+  # Args: 
+  #   - y: vactor of the observations
+  #   - lambda: penalization parameter (threshold)
+  # Returns: 
+  #   - theta: the soft thresholding estimator
+  # ------------------------------------------
   theta <- sign(y) * pmax(rep(0, length(y)), abs(y) - lambda)
   return (theta)
 }
 
-H.lambda <- function(y, lambda){
-  theta <- array(NA, dim = length(y))
-  for (i in 1:length(y)){
-    if (y[i] >= lambda){
-      theta[i] <- y[i]
-    }
-    else{
-      theta[i] <- 0
-    }
-  }
-  return (theta)
-}
-
-
-
 MSE.comp <- function(y.hat, y){
+  # Computes the MSE of predicting y with y.hat
+  # -------------------------------------------
+  # Args: 
+  #   - y.hat: predicted values
+  #   - y: true values 
+  # Returns: 
+  #   - MSE: the MSE
+  # ----------------
   return (mean((y - y.hat)^2))
 }
 
 kfold.CV <- function(X, y, k, lambda){
+  # Computes the k-folds Cross Validation
+  # -------------------------------------
+  # Args: 
+  #   - X: matrix of the features (n*p)
+  #   - y: response vector (length n)
+  #   - k: number of folds
+  #   - lambda: vector of penalization parameters to try
+  # Returns: 
+  #   - mean.MSE: mean of the estimated test errors for each value of lambda
+  #   - sd.MSE: std. dev. of the estimated test errors for each value of lambda
+  # ---------------------------------------------------------------------------
   n <- dim(X)[1]
   idx <- sample(rep(1:k, length.out = n))
   
@@ -52,6 +59,15 @@ kfold.CV <- function(X, y, k, lambda){
 }
 
 Cp.mallows <- function(X, y, lambda){
+  # Computes the Cp Mallows
+  # -----------------------
+  # Args: 
+  #   - X: matrix of the features (n*p)
+  #   - y: response vector (length n)
+  #   - lambda: vector of penalization parameters to try
+  # Returns: 
+  #   - Cp: Mallow's Cp for each value of lambda
+  # --------------------------------------------
   n <- length(y)
   p <- dim(X)[2]
   fit <- glmnet(X, y, family="gaussian", alpha = 1, lambda = 0, standardize = FALSE, intercept = FALSE)

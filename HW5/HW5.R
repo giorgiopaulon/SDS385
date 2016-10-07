@@ -22,7 +22,7 @@ plot(y.grid, H.lambda(y.grid, lambda), type = 'l', lwd = 2, col = 'dodgerblue3',
 # (B)
 
 n <- 100
-K <- 0.9
+K <- 0
 
 theta <- rnorm(n, 0, 5)
 mask <- rbinom(n, 1, K)
@@ -39,6 +39,7 @@ plot(theta, theta.hat, xlab = bquote(theta), ylab=bquote(hat(theta)), pch = 1, l
 abline(a = 0, b = 1, lwd = 2, col='red')
 abline(h=0)
 
+
 lambda.grid <- seq(0, 5, by = 0.05)
 MSE <- array(NA, dim = length(lambda.grid))
 for (i in 1:length(lambda.grid)){
@@ -48,7 +49,7 @@ for (i in 1:length(lambda.grid)){
 
 par(mar=c(4,4.5,2,2), cex = 1.2)
 plot(lambda.grid, MSE, type = 'l', lwd = 2, col='red', xlab = bquote(lambda))
-abline(v=lambda.grid[which.min(MSE)], lwd = 2)
+abline(v=lambda.grid[which.min(MSE)], lwd = 2, lty = 2)
 
 ### THE LASSO
 
@@ -61,7 +62,7 @@ n <- dim(X)[1]
 p <- dim(X)[2]
 
 # Fit a Lasso regression for a grid of penalty coefficient lambda
-fit <- glmnet(X, y, family="gaussian", alpha = 1, nlambda = 100, standardize = FALSE, intercept=FALSE)
+fit <- glmnet(X, y, family="gaussian", alpha = 1, nlambda = 50, standardize = FALSE, intercept=FALSE)
 
 # (A)
 # Plot the solution paths for each beta_i
@@ -85,7 +86,7 @@ k <- 10
 MOOSE <- kfold.CV(X, y, k, fit$lambda)
 
 # Plot the MOOSE along with the error bars.
-plotCI(x = log(fit$lambda), y = MOOSE$mean.MSE, uiw = MOOSE$sd.MSE, col = 'red', pch = 16, scol = 'gray', cex=0.8)
+plotCI(x = log(fit$lambda), y = MOOSE$mean.MSE, uiw = MOOSE$sd.MSE, col = 'orange', pch = 16, scol = 'gray', cex=0.8, lwd = 2, xlab = expression(paste(log(lambda))), ylab = 'MOOSE')
 # Trace the line corresponding to the optimal lambda
 abline(v = log(fit$lambda[which.min(MOOSE$mean.MSE)]), lwd = 1, col = 1, lty = 2)
 
@@ -99,7 +100,8 @@ idx <- idx[1]
 # Trace the line corresponding to the most conservative model among the ones with optimal lambda 
 # 1-std. dev criterion.
 abline(v = log(fit$lambda[idx]), lwd = 1, col = 1, lty = 3)
-
+# 0.03489455 optimal
+# 0.08931428 optimal most conservative
 
 # Just for the sake of completeness, we compare the result with R's built-in function. The two functions
 # should give similar results.
@@ -114,7 +116,7 @@ plot(log(fit$lambda), Cp, type = 'b', pch = 16)
 
 # Comparison between the three methods
 par(mar=c(4,2,2,2), cex = 1.4)
-plot(log(fit$lambda), MSE, type = 'b', pch = 16, xlab = bquote(log(lambda)), cex = 0.6, col = 'dodgerblue3')
+plot(log(fit$lambda), MSE, type = 'b', pch = 16, xlab = bquote(log(lambda)), cex = 0.6, col = 'dodgerblue3', ylim=c(0.4, 1.1))
 plotCI(x = log(fit$lambda), y = MOOSE$mean.MSE, uiw = MOOSE$sd.MSE, col = 'red', pch = 16, scol = 'gray', add = T, cex = 0.6)
 points(log(fit$lambda), Cp, type = 'b', pch = 16, cex = 0.6, col = 'goldenrod2')
 legend('topleft', legend = c('MSE', 'MOOSE', 'Cp'), col = c('dodgerblue3', 'red', 'goldenrod2'), pch = 16, cex = 0.8)
