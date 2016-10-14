@@ -97,8 +97,8 @@ rm(list=ls())
 
 Rcpp::sourceCpp('./HW4/adagrad_eigen.cc')
 
-X <- readRDS(file='../SDS385-master/data/url_tX.rds')
-y <- readRDS(file='../SDS385-master/data/url_y.rds')
+X <- readRDS(file='./HW4/url_tX.rds')
+y <- readRDS(file='./HW4/url_y.rds')
 N <- length(y)
 mi <- rep(1, N)
 P <- dim(X)[1]
@@ -107,7 +107,7 @@ eta <- 2
 lambda <- 1E-6
 beta0 <- rep(0, P)
 
-ada <- Ada_Grad(X, y, mi, beta0, eta, npass = 5, lambda)
+ada <- Ada_Grad(X, y, mi, beta0, eta, npass = 2, lambda)
 
 plot(1:5000, ada$loglik[seq(1, length(ada$loglik), length.out = 5000)], type = 'l', lwd = 2)
 
@@ -179,9 +179,14 @@ prec <- sum(y == y.pred)/length(y)
 # colnames(prec) <- rep("NA", length(lambda.vec))
 # for (i in 1:length(lambda.vec))
 #   colnames(prec)[i] <- paste("lambda = ", lambda.vec[i], sep = '')
-# save(prec, file = 'cv_choice.Rdata')
-# 
-# par(mar=c(4,4,2,2), cex = 1.2)
-# plotCI(x = 1:length(lambda.vec), y = colMeans(prec), uiw = apply(prec, 2, sd), ylim=c(0.935, 0.99), col = 'orange', pch = 16, scol = 'gray', lwd = 3, xlab = '')
-# abline(v = which.max(colMeans(prec)), lty = 2)
-# lines(1:length(lambda.vec), colMeans(prec), lwd = 2, col = 'orange')
+
+
+# The code above is commented because it takes a long time to run. I saved the result in the 
+# R object I load below.
+
+load(file = './HW4/cv_choice.Rdata')
+
+par(mar=c(4,4,2,2), cex = 1.2)
+plotCI(x = 1:length(lambda.vec), y = colMeans(prec), uiw = apply(prec, 2, sd), ylim=c(0.935, 0.99), col = 'orange', pch = 16, scol = 'gray', lwd = 3, xlab = '')
+abline(v = which.max(colMeans(prec)), lty = 2)
+lines(1:length(lambda.vec), colMeans(prec), lwd = 2, col = 'orange')
