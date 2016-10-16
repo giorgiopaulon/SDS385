@@ -1,12 +1,5 @@
 
 
-# Function for the SGD of the logit model
-# Inputs:
-#   -
-#   - 
-# Outputs:
-#   - 
-#   - 
 SGD <- function(y, X, mi, beta0, maxiter, alpha, tol){
   
   N <- dim(X)[1]
