@@ -37,7 +37,8 @@ kfold.CV <- function(X, y, k, lambda){
   #   - sd.MSE: std. dev. of the estimated test errors for each value of lambda
   # ---------------------------------------------------------------------------
   n <- dim(X)[1]
-  idx <- sample(rep(1:k, length.out = n))
+  folds <- cut(1:n, breaks = k, labels=FALSE)
+  idx <- sample(folds)
   
   MSE <- array(NA, dim = c(k, length(lambda)))
   for (i in 1:k){

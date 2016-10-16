@@ -13,16 +13,18 @@ source('HW5/cv.R')
 # theta.grid <- seq(-5, 5, by = 0.1)
 
 y.grid <- seq(-4, 4, by = 0.01)
-lambda <- 2
+lambda <- 1
 
 par(mar=c(4,4,1,1))
 plot(y.grid, S.lambda(y.grid, lambda), type = 'l', lwd = 2, col = 'dodgerblue3', xlab = 'y', ylab = bquote(S[lambda]), xlim=range(y.grid), ylim=range(y.grid), asp=1)
-plot(y.grid, H.lambda(y.grid, lambda), type = 'l', lwd = 2, col = 'dodgerblue3', xlab = 'y', ylab = bquote(H[lambda]), xlim=range(y.grid), ylim=range(y.grid), asp=1)
+abline(h=0)
+abline(v=0)
+lines(y.grid, S.lambda(y.grid, lambda), lwd = 2, col = 'dodgerblue3')
 
 # (B)
 
 n <- 100
-K <- 0
+K <- 0.9
 
 theta <- rnorm(n, 0, 5)
 mask <- rbinom(n, 1, K)
@@ -117,15 +119,16 @@ plot(log(fit$lambda), Cp, type = 'b', pch = 16)
 # Comparison between the three methods
 par(mar=c(4,2,2,2), cex = 1.4)
 plot(log(fit$lambda), MSE, type = 'b', pch = 16, xlab = bquote(log(lambda)), cex = 0.6, col = 'dodgerblue3', ylim=c(0.4, 1.1))
-plotCI(x = log(fit$lambda), y = MOOSE$mean.MSE, uiw = MOOSE$sd.MSE, col = 'red', pch = 16, scol = 'gray', add = T, cex = 0.6)
+# plotCI(x = log(fit$lambda), y = MOOSE$mean.MSE, uiw = MOOSE$sd.MSE, col = 'red', pch = 16, scol = 'gray', add = T, cex = 0.6)
+points(x = log(fit$lambda), y = MOOSE$mean.MSE, col = 'red', pch = 16, cex = 0.6)
 points(log(fit$lambda), Cp, type = 'b', pch = 16, cex = 0.6, col = 'goldenrod2')
 legend('topleft', legend = c('MSE', 'MOOSE', 'Cp'), col = c('dodgerblue3', 'red', 'goldenrod2'), pch = 16, cex = 0.8)
 abline(v = log(fit$lambda[which.min(MOOSE$mean.MSE)]), lwd = 2, col = 'red', lty = 2)
 abline(v = log(fit$lambda[which.min(Cp)]), lwd = 2, col = 'goldenrod2', lty = 2)
 
-# Number of selected covariates in the two cases
+# Number of selected covariates in the three cases
 fit$df[which.min(MOOSE$mean.MSE)]
 fit$df[which.min(Cp)]
-fit$df[idx]
+# fit$df[idx]
 
 
