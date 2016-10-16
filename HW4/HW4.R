@@ -6,6 +6,7 @@ library('Rcpp')
 library('RcppArmadillo')
 library('RcppEigen')
 library('Matrix')
+library(plotrix)
 
 
 ###########################
@@ -140,10 +141,10 @@ prec <- sum(y == y.pred)/length(y)
 # 
 # # Scale so that they have equivalent L2 norm: TO PRESERVE SPARSITY!
 # 
-# eta <- 1
-# lambda.vec <- c(0, 1E-10, 1E-9, 1E-8, 1E-7, 1E-6, 1E-5, 1E-4, 1E-3)
-# beta0 <- rep(0, P)
-# n.folds = 5
+eta <- 1
+lambda.vec <- c(0, 1E-10, 1E-9, 1E-8, 1E-7, 1E-6, 1E-5, 1E-4, 1E-3)
+beta0 <- rep(0, P)
+n.folds = 5
 # 
 # idx <- sample(rep(1:n.folds, length.out = N))
 # prec <- matrix(NA, nrow = n.folds, ncol = length(lambda.vec))
@@ -187,6 +188,6 @@ prec <- sum(y == y.pred)/length(y)
 load(file = './HW4/cv_choice.Rdata')
 
 par(mar=c(4,4,2,2), cex = 1.2)
-plotCI(x = 1:length(lambda.vec), y = colMeans(prec), uiw = apply(prec, 2, sd), ylim=c(0.935, 0.99), col = 'orange', pch = 16, scol = 'gray', lwd = 3, xlab = '')
-abline(v = which.max(colMeans(prec)), lty = 2)
-lines(1:length(lambda.vec), colMeans(prec), lwd = 2, col = 'orange')
+plotCI(x = log(lambda.vec), y = colMeans(prec), uiw = apply(prec, 2, sd), ylim=c(0.935, 0.99), col = 'orange', pch = 16, scol = 'gray', lwd = 3, xlab = expression(paste(log(lambda))), ylab = expression(paste(CV[err])))
+abline(v = log(lambda.vec)[which.max(colMeans(prec))], lty = 2)
+lines(log(lambda.vec), colMeans(prec), lwd = 2, col = 'orange')
