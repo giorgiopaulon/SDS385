@@ -68,6 +68,8 @@ proximal.gradient <- function(y, X, beta0, lambda, gamma = 1E-4, maxiter = 50000
     stop("Incorrect input dimensions.")
   }
   
+  lambda <- lambda * length(y)
+  
   # Initialize the data structures
   betas <- array(NA, dim=c(maxiter, length(beta0)))
   betas[1,] <- beta0 # Initial guess
@@ -123,11 +125,15 @@ acc.proximal.gradient <- function(y, X, beta0, lambda, gamma = 1E-4, maxiter = 5
     stop("Incorrect input dimensions.")
   }
   
+  lambda <- lambda * length(y)
+  
+  # We could precache the operations XtX, Xtbeta in order to compute the gradient
+  
   # Initialize the data structures
   betas <- array(NA, dim=c(maxiter, length(beta0)))
   betas[1,] <- beta0 # Initial guess
-  z <- array(NA, dim=c(maxiter, length(beta0)))
-  z[1,] <- beta0
+  z <- array(NA, dim = length(beta0))
+  z <- beta0
   s <- array(NA, dim = maxiter)
   s[1] <- 1
   ll <- array(NA, dim = maxiter)
@@ -136,13 +142,13 @@ acc.proximal.gradient <- function(y, X, beta0, lambda, gamma = 1E-4, maxiter = 5
   for (iter in 2:maxiter){
     
     # Compute the gradient
-    gradient <- grad.loglik(z[iter-1, ], y, X)
-    u <- z[iter-1, ] - gamma * gradient
+    gradient <- grad.loglik(z, y, X)
+    u <- z - gamma * gradient
     
     # Update beta
     betas[iter, ] <- soft.thresholding(u, gamma * lambda)
     s[iter] <- (1 + sqrt(1 + 4 * s[iter-1]^2))/2
-    z[iter, ] <- betas[iter, ] + ((s[iter-1] - 1)/s[iter]) * (betas[iter, ] - betas[iter-1, ])
+    z <- betas[iter, ] + ((s[iter-1] - 1)/s[iter]) * (betas[iter, ] - betas[iter-1, ])
       
     # Compute log-likelihood
     ll[iter] <- log.lik(betas[iter,], y, X, lambda)
